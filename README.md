@@ -115,82 +115,6 @@ Content-Type: application/json
 }
 ```
 
-## Características Implementadas
-
-### ✅ Requisitos Cumplidos
-
-1. **Modelo de Etiquetas**
-   - ✅ Modelo `Tag` con campo `name` único
-   - ✅ Relación muchos a muchos con `Task`
-   - ✅ Tabla intermedia `task_tags`
-
-2. **Migraciones**
-   - ✅ Migración Alembic generada y aplicada
-   - ✅ Tablas creadas correctamente en PostgreSQL
-
-3. **Endpoints CRUD de Etiquetas**
-   - ✅ GET `/tags` - Listar todas las etiquetas
-   - ✅ GET `/tags/{id}` - Obtener etiqueta específica
-   - ✅ POST `/tags/create` - Crear etiqueta
-   - ✅ PUT `/tags/update/{id}` - Actualizar etiqueta
-   - ✅ DELETE `/tags/delete/{id}` - Eliminar etiqueta
-
-4. **Filtrado de Tareas por Etiquetas**
-   - ✅ GET `/tasks?tags=etiqueta1,etiqueta2`
-   - ✅ Filtrado por múltiples etiquetas
-
-5. **Asociación de Etiquetas**
-   - ✅ Crear etiquetas automáticamente al crear tareas
-   - ✅ Asociar/desasociar etiquetas al actualizar tareas
-
-6. **Documentación**
-   - ✅ Swagger UI actualizado
-   - ✅ Ejemplos claros en la documentación
-
-### ✅ Bonus Implementados
-
-1. **Validaciones Adicionales**
-   - ✅ Evitar etiquetas vacías (longitud mínima 1)
-   - ✅ Limitar longitud de etiquetas (máximo 50 caracteres)
-   - ✅ Nombres de etiquetas únicos
-
-2. **Creación Automática de Etiquetas**
-   - ✅ Las etiquetas se crean automáticamente si no existen
-   - ✅ Reutilización de etiquetas existentes
-
-3. **Protección al Eliminar**
-   - ✅ No se puede eliminar etiquetas asociadas a tareas
-   - ✅ Mensaje de error informativo
-
-## Ejemplos de Uso
-
-### Crear etiquetas básicas
-```bash
-curl -X POST "http://localhost:8000/tags/create" \
-  -H "Authorization: Bearer <token>" \
-  -H "Content-Type: application/json" \
-  -d '{"name": "urgente"}'
-```
-
-### Crear tarea con etiquetas
-```bash
-curl -X POST "http://localhost:8000/tasks/create" \
-  -H "Authorization: Bearer <token>" \
-  -H "Content-Type: application/json" \
-  -d '{
-    "title": "Revisar código",
-    "description": "Revisar el código del proyecto",
-    "status": "pending",
-    "tag_names": ["urgente", "revisión"]
-  }'
-```
-
-### Filtrar tareas por etiquetas
-```bash
-curl -X GET "http://localhost:8000/tasks?tags=urgente,trabajo" \
-  -H "Authorization: Bearer <token>"
-```
-
 ## Tecnologías Utilizadas
 
 - **FastAPI**: Framework web para la API
@@ -205,7 +129,7 @@ curl -X GET "http://localhost:8000/tasks?tags=urgente,trabajo" \
 ```
 ToDo-FastAPI/
 ├── models/
-│   ├── task.py      # Modelo Task con relación a tags
+│   ├── task.py      # Modelo Task con relacion a tags
 │   ├── tag.py       # Modelo Tag y tabla intermedia
 │   └── user.py      # Modelo User
 ├── schemas/
