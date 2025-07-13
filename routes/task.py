@@ -38,7 +38,14 @@ def get_tasks(
 
 @router.post('/tasks/create')
 def create_task(task: TaskCreate, db: Session = Depends(get_db), task_payload: dict = Depends(check_jwt)) -> TaskRead:
-    """Crear una nueva tarea con etiquetas opcionales"""
+    """Crear una nueva tarea con etiquetas obligatorias"""
+    # Validar que haya al menos una etiqueta
+    if not task.tag_names or len(task.tag_names) == 0:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail={'message': 'Debe proporcionar al menos una etiqueta para la tarea'}
+        )
+    
     new_task = Task(
         user_id=task_payload['id'],
         title=task.title,
@@ -46,17 +53,16 @@ def create_task(task: TaskCreate, db: Session = Depends(get_db), task_payload: d
         status=task.status.value,
     )
 
-    # Asociar etiquetas si se proporcionan
-    if task.tag_names:
-        for tag_name in task.tag_names:
-            # Buscar la etiqueta existente o crear una nueva
-            tag = db.query(Tag).filter(Tag.name == tag_name).first()
-            if not tag:
-                tag = Tag(name=tag_name)
-                db.add(tag)
-                db.flush()  # Para obtener el ID de la nueva etiqueta
-            
-            new_task.tags.append(tag)
+    # Asociar etiquetas (ahora obligatorias)
+    for tag_name in task.tag_names:
+        # Buscar la etiqueta existente o crear una nueva
+        tag = db.query(Tag).filter(Tag.name == tag_name).first()
+        if not tag:
+            tag = Tag(name=tag_name)
+            db.add(tag)
+            db.flush()  # Para obtener el ID de la nueva etiqueta
+        
+        new_task.tags.append(tag)
 
     # Registrar nueva tarea en base de datos
     db.add(new_task)
@@ -72,7 +78,7 @@ def create_task(task: TaskCreate, db: Session = Depends(get_db), task_payload: d
 
 @router.put('/tasks/update/{id}', dependencies=[Depends(check_jwt)])
 def update_task(id: int, task: TaskUpdate, db: Session = Depends(get_db)) -> dict[str, str]:
-    """Actualizar una tarea existente con etiquetas opcionales"""
+    """Actualizar una tarea existente con etiquetas obligatorias"""
     # Verificar si la tarea existe
     task_exist = db.query(Task).filter(Task.id == id).first()
 
@@ -82,6 +88,13 @@ def update_task(id: int, task: TaskUpdate, db: Session = Depends(get_db)) -> dic
             detail={'message': 'Tarea no encontrada'}
         )
     
+    # Validar que haya al menos una etiqueta
+    if not task.tag_names or len(task.tag_names) == 0:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail={'message': 'Debe proporcionar al menos una etiqueta para la tarea'}
+        )
+    
     # Actualizar campos básicos de la tarea
     db.query(Task).filter(Task.id == id).update({
         Task.title: task.title,
@@ -89,20 +102,19 @@ def update_task(id: int, task: TaskUpdate, db: Session = Depends(get_db)) -> dic
         Task.status: task.status,
     })
     
-    # Actualizar etiquetas si se proporcionan
-    if task.tag_names is not None:
-        # Limpiar etiquetas existentes
-        task_exist.tags.clear()
+    # Actualizar etiquetas (ahora obligatorias)
+    # Limpiar etiquetas existentes
+    task_exist.tags.clear()
+    
+    # Agregar nuevas etiquetas
+    for tag_name in task.tag_names:
+        tag = db.query(Tag).filter(Tag.name == tag_name).first()
+        if not tag:
+            tag = Tag(name=tag_name)
+            db.add(tag)
+            db.flush()
         
-        # Agregar nuevas etiquetas
-        for tag_name in task.tag_names:
-            tag = db.query(Tag).filter(Tag.name == tag_name).first()
-            if not tag:
-                tag = Tag(name=tag_name)
-                db.add(tag)
-                db.flush()
-            
-            task_exist.tags.append(tag)
+        task_exist.tags.append(tag)
     
     db.commit()
 

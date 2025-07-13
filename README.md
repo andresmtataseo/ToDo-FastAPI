@@ -5,7 +5,7 @@
 Se ha implementado exitosamente un sistema completo de etiquetas para la ToDo API que permite:
 
 - **Crear, leer, actualizar y eliminar etiquetas**
-- **Asociar múltiples etiquetas a las tareas**
+- **Asociar múltiples etiquetas a las tareas (OBLIGATORIO)**
 - **Filtrar tareas por etiquetas**
 - **Crear etiquetas automáticamente al crear tareas**
 
@@ -87,7 +87,7 @@ Authorization: Bearer <token>
 **Parámetros de consulta:**
 - `tags` (opcional): Lista de etiquetas separadas por coma
 
-### 2. Crear tarea con etiquetas
+### 2. Crear tarea con etiquetas (OBLIGATORIAS)
 ```
 POST /tasks/create
 Authorization: Bearer <token>
@@ -101,7 +101,9 @@ Content-Type: application/json
 }
 ```
 
-### 3. Actualizar tarea con etiquetas
+**⚠️ IMPORTANTE:** Ahora las etiquetas son **OBLIGATORIAS**. Debe proporcionar al menos una etiqueta.
+
+### 3. Actualizar tarea con etiquetas (OBLIGATORIAS)
 ```
 PUT /tasks/update/{id}
 Authorization: Bearer <token>
@@ -143,7 +145,3 @@ ToDo-FastAPI/
 ├── alembic/         # Migraciones de base de datos
 └── app.py          # Aplicación principal
 ```
-
----
-
-¡El sistema de etiquetas está completamente funcional y listo para usar! 🎉 

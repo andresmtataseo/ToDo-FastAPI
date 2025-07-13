@@ -25,8 +25,8 @@ class TaskRead(TaskBase):
 
 
 class TaskCreate(TaskBase):
-    tag_names: Optional[List[str]] = Field(default=[], description="Nombres de las etiquetas a asociar")
+    tag_names: List[str] = Field(description="Nombres de las etiquetas a asociar (minimo 1)")
 
 
 class TaskUpdate(TaskBase):
-    tag_names: Optional[List[str]] = Field(default=None, description="Nombres de las etiquetas a asociar")
+    tag_names: List[str] = Field(description="Nombres de las etiquetas a asociar (minimo 1)")
